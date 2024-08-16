@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "WebUi/ClientApp"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
