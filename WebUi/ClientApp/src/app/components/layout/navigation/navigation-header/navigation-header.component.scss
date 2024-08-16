@@ -1,0 +1,157 @@
+mat-toolbar{
+  justify-content: center;
+
+  @media (max-width: 599px) {
+    justify-content: left;
+
+    .Menubutton {
+      position: relative;
+    }
+  }
+}
+
+a {
+  text-decoration: none;
+  color: var(--black);
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  padding-right: 2rem;
+  padding-left: 2rem;
+  img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+a:hover {
+  color: var(--black);
+}
+
+span {
+  position: relative;
+  color: var(--black);
+}
+
+label.hamburg {
+  cursor: pointer;
+  display: block;
+  background: transparent; 
+  width: 75px; 
+  height: 40px;
+  position: relative;
+  margin-left: auto; margin-right: auto;
+  border-radius: 4px;
+}
+
+input#hamburg {display:none}
+
+.line {
+  position: absolute;
+  left:10px;
+  height: 4px; width: 55px;
+  background: #fff; border-radius: 2px;
+  display: block;
+  transition: 0.1s;
+  transform-origin: center;
+}
+
+.line:nth-child(1) { top: 6px; }
+.line:nth-child(2) { top: 18px; }
+.line:nth-child(3) { top: 30px; }
+
+#hamburg:hover + .hamburg .line:nth-child(1){
+  top: 4px;
+  background-color: var(--black);
+}
+
+#hamburg:hover + .hamburg .line:nth-child(2){
+  background-color: var(--black);
+}
+
+#hamburg:hover + .hamburg .line:nth-child(3){
+  margin-top: 2px;
+  background-color: var(--black);
+}
+
+li:first-child {
+  border-left: 2px solid white !important;
+}
+
+li a {
+  border-right: 2px solid white !important;
+}
+
+mat-toolbar{
+  background-color: var(--primary800);
+  border-radius: 3px;
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+.Topmenu {
+  margin-left: 100px;
+}
+
+/* Change the link color on hover */
+li a:hover {
+  background-color: var(--black);
+  color: white;
+  opacity: 0.5;
+}
+
+.active {
+  background-color: var(--black);
+}
+
+.navigation-items{
+  list-style-type: none;
+  margin: 0;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  display: flex;
+}
+
+a{
+  font-size: x-large;
+  padding-top: 4px;
+  padding-bottom:  8px;
+}
+
+.Top-Menu {
+  display: flex;
+  height: 52px;
+  align-items: center;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  width: 100%;
+  position: sticky;
+}
+
+li:first-child {
+  border-left: 1px solid #000;
+}
+
+li a {
+  display: block;
+  color: var(--black);
+  padding: 8px 16px;
+  text-decoration: none;
+  text-align: center;
+  border-right: 1px solid #000;
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
+
+.Menubutton {
+  height: 40px;
+  width: 80px;
+  position: absolute;
+}

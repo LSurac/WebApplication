@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Import your custom palette and variables
+@import './palette.scss';
+@import './variables';
+
+// Define the primary and tertiary palettes by merging with the rest of the colors
+$_rest: (
+  secondary: map.get($_palettes, secondary),
+  neutral: map.get($_palettes, neutral),
+  neutral-variant: map.get($_palettes, neutral-variant),
+  error: map.get($_palettes, error),
+);
+$_primary: map.merge(map.get($_palettes, primary), $_rest);
+$_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
+
+// Define your light theme
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $_primary,
+    tertiary: $_tertiary,
+    use-system-variables: true,
+  ),
+  typography: (
+    use-system-variables: true,
+  ),
+));
+
+// Include Angular Material core styles
+@include mat.core();
+
+// Wrap the theme mixins in a CSS selector
+.my-material-theme {
+  // Apply the theme to all components
+  @include mat.all-component-themes($light-theme);
+}
+
+// Import Bootstrap
+@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.min.css";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Global styles
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mdc-tab-indicator__content--underline {
+  border-color: var(--black) !important;
+}
+
+.mat-mdc-tab-link-container {
+  border-bottom-color: transparent !important;
+}

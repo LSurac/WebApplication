@@ -1,0 +1,128 @@
+<div class="container mt-4">
+  <!-- Auswahl des Stellenangebots -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Stellenangebot</mat-label>
+        <mat-select id="applicationSelect" (selectionChange)="onApplicationChange($event.value)">
+          <mat-option *ngFor="let application of applicationList" [value]="application.id">
+            {{ application.description }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  @if (selectedApplicationId != null) {
+    <!-- Bewerberliste -->
+    <div class="my-4">
+      <table mat-table [dataSource]="applicantList" class="mat-elevation-z8">
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef>State</th>
+          <td mat-cell *matCellDef="let applicant">
+            <mat-icon>{{ applicant.applicationState | applicationstate }}</mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstName">
+            <th mat-header-cell *matHeaderCellDef>First Name</th>
+            <td mat-cell *matCellDef="let applicant">{{ applicant.firstName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+            <th mat-header-cell *matHeaderCellDef>Last Name</th>
+            <td mat-cell *matCellDef="let applicant">{{ applicant.lastName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="birthDate">
+            <th mat-header-cell *matHeaderCellDef>Birth Date</th>
+            <td mat-cell *matCellDef="let applicant">{{ applicant.birthDate | date:'yyyy-MM-dd' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="skills">
+            <th mat-header-cell *matHeaderCellDef>Skills</th>
+            <td mat-cell *matCellDef="let applicant">
+              @for (skill of applicant.skillList; track $index) {
+                @if ($index == applicant.skillList.length - 1) {
+                  <span> {{ skill.description }} </span>
+                }
+                @else {
+                  <span> {{ skill.description }}, </span>
+                }
+              }
+              
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            (click)="onSelectApplicant(row)"
+            [class.active-row]="row.id == selectedApplicantId">
+        </tr>
+      </table>
+    </div>
+
+    <!-- Formular zur Bewerbererfassung -->
+    <form [formGroup]="applicantForm" (ngSubmit)="onSave()" class="row g-3">
+      <div class="col-md-6">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>First Name</mat-label>
+          <input matInput id="firstName" formControlName="firstName" type="text" required/>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-md-6">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Last Name</mat-label>
+          <input matInput id="lastName" formControlName="lastName" type="text" required/>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-md-6">
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Birth Date</mat-label>
+            <input matInput id="birthDate" formControlName="birthDate" [matDatepicker]="picker" required/>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-md-6">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Skills</mat-label>
+          <mat-select id="skills" formControlName="skills" multiple>
+            @for (skill of skillList; track $index) {
+              @if (skill.isCurrent) {
+                <mat-option [value]="skill.id" selected>
+                  {{ skill.description }}
+                </mat-option>
+              }
+              @else {
+                <mat-option [value]="skill.id">
+                  {{ skill.description }}
+                </mat-option>
+              }
+            }
+
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-6">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Application State</mat-label>
+          <mat-select id="applicationState" formControlName="applicationState" required>
+            <mat-option *ngFor="let state of applicationStates" [value]="state.value">
+              {{ state.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-12 text-end">
+        <button class="mx-2" mat-raised-button color="warn" type="button" (click)="resetForm()">Reset</button>
+        <button class="mx-2" mat-raised-button color="primary" type="submit">Save</button>
+      </div>
+    </form>
+   }
+</div>

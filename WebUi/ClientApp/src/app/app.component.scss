@@ -1,0 +1,19 @@
+#homepage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-navigation {
+  flex-shrink: 0;
+  height: 64px;
+}
+
+app-footer {
+  position: relative;
+  flex-shrink: 1;
+  bottom: 0;
+  height: 150px;
+  width: 100%;
+  margin-top: 3rem;
+}

@@ -1,0 +1,42 @@
+<mat-nav-list *ngIf="currentBreakpoint && customBreakpoint && currentBreakpoint <= customBreakpoint">
+  <div class="sidenav" [ngStyle]="{'height': sidebarHeight}">
+    <div class="Menubutton-top">
+      <div class="d-flex Menuspan">
+        <span class="align-self-center">Menu</span>
+      </div>
+      <div class="close-container" mat-icon-button (click)="onSidenavClose()">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+        <label class="close">close</label>
+      </div>
+    </div>
+    <div class="sidenav-container">
+      <a mat-list-item [routerLink]="['/company']" (click)="onSidenavClose()">
+        <span id="company" class="Menuicon bi bi-house"></span>
+        <span id="companyHover" class="Menuicon bi bi-house-fill"></span>
+        <span class="mx-1">Company</span>
+      </a>
+      <a mat-list-item (click)="onSidenavClose()">
+        <span id="products" class="Menuicon bi bi-cart"></span>
+        <span id="productsHover" class="Menuicon bi bi-cart-fill"></span>
+        <span class="mx-1">Products</span>
+      </a>
+      <a mat-list-item [routerLink]="['/customers']" (click)="onSidenavClose()">
+        <span id="customers" class="Menuicon bi bi-people"></span>
+        <span id="customersHover" class="Menuicon bi bi-people-fill"></span>
+        <span class="mx-1">Customers</span>
+      </a>
+      <a mat-list-item [routerLink]="['/career']" (click)="onSidenavClose()">
+        <span id="career" class="Menuicon bi bi-door-closed"></span>
+        <span id="careerHover" class="Menuicon bi bi-door-open-fill"></span>
+        <span class="mx-1">Career</span>
+      </a>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onSidenavClose()">Homepage</button>
+        <button mat-menu-item (click)="onSidenavClose()">People</button>
+        <button mat-menu-item (click)="onSidenavClose()">Art</button>
+        <button mat-menu-item (click)="onSidenavClose()">Animations</button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-nav-list>
