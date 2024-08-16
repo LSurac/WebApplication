@@ -1,0 +1,8 @@
+<mat-sidenav #sidenav>
+    <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
+</mat-sidenav>
+<mat-sidenav-container>
+    <mat-sidenav-content>
+      <app-navigation-header (sidenavToggle)="sidenav.toggle()"></app-navigation-header>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,24 @@
+<mat-toolbar>
+  <ng-container *ngIf="currentBreakpoint && customBreakpoint && currentBreakpoint <= customBreakpoint">
+    <div class="Menubutton d-flex">
+      <input type="checkbox" id="hamburg" (click)="onToggleSidenav()">
+      <label for="hamburg" class="hamburg">
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+      </label>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="currentBreakpoint && customBreakpoint && currentBreakpoint > customBreakpoint">
+    <div class="d-flex">
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+      <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+        @for (element of navigationItem; track element) {
+          <a mat-tab-link [routerLink]="element.link" (click)="activeLink = element" [active]="activeLink == element">
+            {{ element.label }}
+          </a>
+        }
+      </nav>
+    </div>
+  </ng-container>
+</mat-toolbar>
