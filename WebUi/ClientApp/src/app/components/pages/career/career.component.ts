@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/commons/materials.module';
 import { ApplicationstatePipe } from 'src/app/pipes/applicationstate.pipe';
 import { ApplicantService } from 'src/app/services/applicant.service';
@@ -9,6 +9,7 @@ import { SkillService } from 'src/app/services/skill.service';
 import { ApplicantDto, ApplicationDto, EApplicationState, SkillDto } from 'src/app/services/Web_Application_Client';
 import { LoadingIndicatorComponent } from '../../widgets/loading-indicator/loading-indicator.component';
 import { firstValueFrom, Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   standalone: true,
@@ -18,28 +19,37 @@ import { firstValueFrom, Observable } from 'rxjs';
   styleUrls: ['./career.component.scss']
 })
 export class CareerComponent implements OnInit {
-  applicantForm: FormGroup;
-  applicantList: ApplicantDto[] = [];
-  skillList: SkillDto[] = [];
-  applicationList: ApplicationDto[] = [];
-  selectedApplicantId: number | undefined;
-  selectedApplicationId: number | undefined;
-  isLoading: boolean = false;
-  isOverlay: boolean = true;
-  displayedColumns: string[] = ['state', 'firstName', 'lastName', 'birthDate', 'skills'];
-  applicationStates = Object.keys(EApplicationState)
+  @ViewChild(FormGroupDirective) formDirective: FormGroupDirective | undefined;
+  
+  private readonly applicantService: ApplicantService;
+  private readonly skillService: SkillService;
+  private readonly applicationService: ApplicationService;
+  
+  private snackBar: MatSnackBar;
+  private fb: FormBuilder;
+
+  public applicantForm: FormGroup;
+  public applicantList: ApplicantDto[] = [];
+  public skillList: SkillDto[] = [];
+  public applicationList: ApplicationDto[] = [];
+  public selectedApplicantId: number | undefined;
+  public selectedApplicationId: number | undefined;
+  public isLoading: boolean = false;
+  public isOverlay: boolean = true;
+  public displayedColumns: string[] = ['state', 'firstName', 'lastName', 'birthDate', 'skills'];
+  public applicationStates = Object.keys(EApplicationState)
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({
       value: (EApplicationState as any)[key as keyof typeof EApplicationState],
       label: key
     }));
 
-  constructor(
-    private fb: FormBuilder,
-    private applicantService: ApplicantService,
-    private skillService: SkillService,
-    private applicationService: ApplicationService
-  ) {
+  constructor() {
+    this.fb = new FormBuilder();
+    this.applicantService = inject(ApplicantService);
+    this.skillService = inject(SkillService);
+    this.applicationService = inject(ApplicationService);
+    this.snackBar = inject(MatSnackBar);
     this.applicantForm = this.fb.group({
       firstName: [''],
       lastName: [''],
@@ -49,7 +59,7 @@ export class CareerComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadApplicationsAsync();
   }
 
@@ -63,7 +73,7 @@ export class CareerComponent implements OnInit {
     });
   }
 
-  loadApplicants(): void {
+  private loadApplicants(): void {
     if (this.selectedApplicationId) {
       let selectedApplication = this.applicationList.filter(application => application.id == this.selectedApplicationId);
 
@@ -81,13 +91,13 @@ export class CareerComponent implements OnInit {
     }
   }
 
-  loadSkills(applicantId: number | undefined): void {
+  private loadSkills(applicantId: number | undefined): void {
     this.skillService.SkillListGet(applicantId).subscribe(result => {
       this.skillList = result.skillList;
     });
   }
 
-  onApplicationChange(applicationId: number | undefined): void {
+  public onApplicationChange(applicationId: number | undefined): void {
     this.selectedApplicationId = applicationId;
     this.resetForm();
     this.loadApplicants();
@@ -122,6 +132,20 @@ export class CareerComponent implements OnInit {
         await firstValueFrom(this.applicantService.ApplicantSet(applicant, this.selectedApplicationId)).then(() => {
           this.loadApplicationsAsync();
           this.resetForm();
+
+          this.snackBar.open('Applicant has been saved!', 'X', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: 'app-notification-success'
+          });
+        }).catch(() => {
+          this.snackBar.open('Error while saving Applicant', 'X', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: 'app-notification-error'
+          });
         });
       }
     } finally {
@@ -129,7 +153,7 @@ export class CareerComponent implements OnInit {
     }
   }
 
-  onSelectApplicant(applicant: ApplicantDto): void {
+  public onSelectApplicant(applicant: ApplicantDto): void {
     this.selectedApplicantId = applicant.id;
     this.loadSkills(applicant.id);
     
@@ -146,14 +170,9 @@ export class CareerComponent implements OnInit {
     });
   }
 
-  onEdit(applicant: ApplicantDto): void {
-    this.selectedApplicantId = applicant.id;
-    this.applicantForm.patchValue(applicant);
-    this.loadSkills(this.selectedApplicantId);
-  }
-
   public resetForm(): void {
     this.applicantForm.reset();
+    this.formDirective?.resetForm();
     this.selectedApplicantId = undefined;
   }
 }

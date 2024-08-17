@@ -52,3 +52,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-tab-link-container {
   border-bottom-color: transparent !important;
 }
+
+.mat-mdc-snack-bar-container {
+  --mat-mdc-snack-bar-button-color: #ffffff;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+
+  &.app-notification-error {
+    --mdc-snackbar-container-color: #bb2124;
+  }
+
+  &.app-notification-success {
+    --mdc-snackbar-container-color: #43a446;
+  }
+}
