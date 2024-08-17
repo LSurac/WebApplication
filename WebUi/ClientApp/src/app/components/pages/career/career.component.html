@@ -63,7 +63,7 @@
     </div>
 
     <!-- Formular zur Bewerbererfassung -->
-    <form [formGroup]="applicantForm" (ngSubmit)="onSave()" class="row g-3">
+    <form [formGroup]="applicantForm" (ngSubmit)="onSaveAsync()" class="row g-3">
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>First Name</mat-label>
@@ -126,3 +126,4 @@
     </form>
    }
 </div>
+<app-loading-indicator [isOverlay]="isOverlay" [isLoading]="isLoading"></app-loading-indicator>

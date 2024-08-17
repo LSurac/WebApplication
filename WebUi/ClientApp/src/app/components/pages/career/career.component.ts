@@ -7,10 +7,12 @@ import { ApplicantService } from 'src/app/services/applicant.service';
 import { ApplicationService } from 'src/app/services/application.service';
 import { SkillService } from 'src/app/services/skill.service';
 import { ApplicantDto, ApplicationDto, EApplicationState, SkillDto } from 'src/app/services/Web_Application_Client';
+import { LoadingIndicatorComponent } from '../../widgets/loading-indicator/loading-indicator.component';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Component({
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule, MaterialModule, ApplicationstatePipe],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule, MaterialModule, ApplicationstatePipe, LoadingIndicatorComponent],
   selector: 'app-career',
   templateUrl: './career.component.html',
   styleUrls: ['./career.component.scss']
@@ -22,6 +24,8 @@ export class CareerComponent implements OnInit {
   applicationList: ApplicationDto[] = [];
   selectedApplicantId: number | undefined;
   selectedApplicationId: number | undefined;
+  isLoading: boolean = false;
+  isOverlay: boolean = true;
   displayedColumns: string[] = ['state', 'firstName', 'lastName', 'birthDate', 'skills'];
   applicationStates = Object.keys(EApplicationState)
     .filter((key) => isNaN(Number(key)))
@@ -46,13 +50,16 @@ export class CareerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadApplications();
+    this.loadApplicationsAsync();
   }
 
-  loadApplications(): void {
-    this.applicationService.ApplicationListGet().subscribe(result => {
+  private async loadApplicationsAsync(): Promise<void> {
+    this.isLoading = true;
+    await firstValueFrom(this.applicationService.ApplicationListGet()).then(result => {
       this.applicationList = result.applicationList;
       this.loadApplicants();
+    }).finally(() => {
+      this.isLoading = false;
     });
   }
 
@@ -86,31 +93,36 @@ export class CareerComponent implements OnInit {
     this.loadApplicants();
   }
 
-  onSave(): void {
-    let applicant = new ApplicantDto();
-    let formValues = this.applicantForm.value;
-
-    applicant.id = this.selectedApplicantId || 0;
-    applicant.applicationState = formValues.applicationState;
-    applicant.firstName = formValues.firstName;
-    applicant.lastName = formValues.lastName;
-    let birthDateValue = formValues.birthDate;
-    applicant.birthDate = birthDateValue ? new Date(birthDateValue) : new Date();
-
-    applicant.skillList = formValues.skills.map((skillId: number, isCurrent: boolean) => {
-      let skill = this.skillList.find(s => s.id === skillId);
-      return new SkillDto({
-        id: skillId,
-        description: skill?.description || 'Unknown',
-        isCurrent: true
+  public async onSaveAsync(): Promise<void> {
+    try {
+      this.isLoading = true;
+      let applicant = new ApplicantDto();
+      let formValues = this.applicantForm.value;
+  
+      applicant.id = this.selectedApplicantId || 0;
+      applicant.applicationState = formValues.applicationState;
+      applicant.firstName = formValues.firstName;
+      applicant.lastName = formValues.lastName;
+      let birthDateValue = formValues.birthDate;
+      applicant.birthDate = birthDateValue ? new Date(birthDateValue) : new Date();
+  
+      applicant.skillList = formValues.skills.map((skillId: number, isCurrent: boolean) => {
+        let skill = this.skillList.find(s => s.id === skillId);
+        return new SkillDto({
+          id: skillId,
+          description: skill?.description || 'Unknown',
+          isCurrent: true
+        });
       });
-    });
-
-    if (this.selectedApplicationId != undefined) {
-      this.applicantService.ApplicantSet(applicant, this.selectedApplicationId).subscribe(() => {
-        this.loadApplications();
-        this.resetForm();
-      });
+  
+      if (this.selectedApplicationId != undefined) {
+        await firstValueFrom(this.applicantService.ApplicantSet(applicant, this.selectedApplicationId)).then(() => {
+          this.loadApplicationsAsync();
+          this.resetForm();
+        });
+      }
+    } finally {
+      this.isLoading = false;
     }
   }
 
