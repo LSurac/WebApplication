@@ -1,0 +1,9 @@
+<div *ngIf="isLoading">
+  <div *ngIf="isOverlay" class="overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <ng-container *ngIf="!isOverlay">
+    <div class="spinner embedded"></div>
+  </ng-container>
+</div>

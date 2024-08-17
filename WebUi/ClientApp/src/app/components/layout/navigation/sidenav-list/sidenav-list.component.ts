@@ -8,7 +8,11 @@ import { ENVIRONMENT } from 'src/environments/environment';
 
 @Component({
   standalone: true,
-  imports: [MaterialModule, CommonModule, RouterModule],
+  imports: [
+    MaterialModule, 
+    CommonModule, 
+    RouterModule
+  ],
   selector: 'app-sidenav-list',
   templateUrl: './sidenav-list.component.html',
   styleUrls: ['./sidenav-list.component.scss']

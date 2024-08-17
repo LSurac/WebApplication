@@ -15,7 +15,7 @@ $_rest: (
 $_primary: map.merge(map.get($_palettes, primary), $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
-// Define your light theme
+// Define the light theme
 $light-theme: mat.define-theme((
   color: (
     theme-type: light,
@@ -51,4 +51,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-mdc-tab-link-container {
   border-bottom-color: transparent !important;
+}
+
+.mat-mdc-snack-bar-container {
+  --mat-mdc-snack-bar-button-color: #ffffff;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+
+  &.app-notification-error {
+    --mdc-snackbar-container-color: #bb2124;
+  }
+
+  &.app-notification-success {
+    --mdc-snackbar-container-color: #43a446;
+  }
 }

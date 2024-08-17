@@ -9,14 +9,20 @@
 table {
     width: 100%;
 }
-  
+
+.mat-mdc-header-row  {
+    filter: brightness(0.9);
+    border-bottom: 1px solid var(--black);
+    font-weight: bold;
+}
+
 .mat-mdc-row .mat-mdc-cell {
-    border-bottom: 2px solid transparent;
+    border-bottom: 1px solid var(--black);
     cursor: pointer;
 }
 
 .mat-mdc-row:hover .mat-mdc-cell {
-    border-color: currentColor;
+    filter: brightness(0.9);
 }
   
 .active-row {
@@ -26,3 +32,8 @@ table {
 .inactive-row {
     font-weight: normal;
 }
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}  

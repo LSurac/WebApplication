@@ -16,98 +16,93 @@
   @if (selectedApplicationId != null) {
     <!-- Bewerberliste -->
     <div class="my-4">
-      <table mat-table [dataSource]="applicantList" class="mat-elevation-z8">
-        <ng-container matColumnDef="state">
-          <th mat-header-cell *matHeaderCellDef>State</th>
-          <td mat-cell *matCellDef="let applicant">
-            <mat-icon>{{ applicant.applicationState | applicationstate }}</mat-icon>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="firstName">
-            <th mat-header-cell *matHeaderCellDef>First Name</th>
-            <td mat-cell *matCellDef="let applicant">{{ applicant.firstName }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="lastName">
-            <th mat-header-cell *matHeaderCellDef>Last Name</th>
-            <td mat-cell *matCellDef="let applicant">{{ applicant.lastName }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="birthDate">
-            <th mat-header-cell *matHeaderCellDef>Birth Date</th>
-            <td mat-cell *matCellDef="let applicant">{{ applicant.birthDate | date:'yyyy-MM-dd' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="skills">
-            <th mat-header-cell *matHeaderCellDef>Skills</th>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="applicantList" class="mat-elevation-z8">
+          <ng-container matColumnDef="state">
+            <th mat-header-cell *matHeaderCellDef>State</th>
             <td mat-cell *matCellDef="let applicant">
-              @for (skill of applicant.skillList; track $index) {
-                @if ($index == applicant.skillList.length - 1) {
-                  <span> {{ skill.description }} </span>
-                }
-                @else {
-                  <span> {{ skill.description }}, </span>
-                }
-              }
-              
+              <mat-icon>{{ applicant.applicationState | applicationstate }}</mat-icon>
             </td>
-        </ng-container>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-            (click)="onSelectApplicant(row)"
-            [class.active-row]="row.id == selectedApplicantId">
-        </tr>
-      </table>
+          <ng-container matColumnDef="firstName">
+              <th mat-header-cell *matHeaderCellDef>First Name</th>
+              <td mat-cell *matCellDef="let applicant">{{ applicant.firstName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastName">
+              <th mat-header-cell *matHeaderCellDef>Last Name</th>
+              <td mat-cell *matCellDef="let applicant">{{ applicant.lastName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="birthDate">
+              <th mat-header-cell *matHeaderCellDef>Birth Date</th>
+              <td mat-cell *matCellDef="let applicant">{{ applicant.birthDate | date:'yyyy-MM-dd' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="skills">
+              <th mat-header-cell *matHeaderCellDef>Skills</th>
+              <td mat-cell *matCellDef="let applicant">
+                @for (skill of applicant.skillList; track $index) {
+                  @if ($index == applicant.skillList.length - 1) {
+                    <span> {{ skill.description }} </span>
+                  }
+                  @else {
+                    <span> {{ skill.description }}, </span>
+                  }
+                }
+                
+              </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              (click)="onSelectApplicant(row)"
+              [class.active-row]="row.id == selectedApplicantId">
+          </tr>
+        </table>
+      </div>
     </div>
 
     <!-- Formular zur Bewerbererfassung -->
-    <form [formGroup]="applicantForm" (ngSubmit)="onSave()" class="row g-3">
+    <form [formGroup]="applicantForm" (ngSubmit)="onSaveAsync()" class="row g-3">
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>First Name</mat-label>
           <input matInput id="firstName" formControlName="firstName" type="text" required/>
+          <mat-error *ngIf="applicantForm.get('firstName')?.hasError('required')">First Name is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Last Name</mat-label>
           <input matInput id="lastName" formControlName="lastName" type="text" required/>
+          <mat-error *ngIf="applicantForm.get('lastName')?.hasError('required')">Last Name is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
-            <mat-label>Birth Date</mat-label>
-            <input matInput id="birthDate" formControlName="birthDate" [matDatepicker]="picker" required/>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+          <mat-label>Birth Date</mat-label>
+          <input matInput id="birthDate" formControlName="birthDate" [matDatepicker]="picker" required/>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="applicantForm.get('birthDate')?.hasError('required')">Birth Date is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Skills</mat-label>
           <mat-select id="skills" formControlName="skills" multiple>
-            @for (skill of skillList; track $index) {
-              @if (skill.isCurrent) {
-                <mat-option [value]="skill.id" selected>
-                  {{ skill.description }}
-                </mat-option>
-              }
-              @else {
-                <mat-option [value]="skill.id">
-                  {{ skill.description }}
-                </mat-option>
-              }
-            }
-
+            <mat-option *ngFor="let skill of skillList" [value]="skill.id">
+              {{ skill.description }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Application State</mat-label>
@@ -116,13 +111,17 @@
               {{ state.label }}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="applicantForm.get('applicationState')?.hasError('required')">Application State is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-12 text-end">
-        <button class="mx-2" mat-raised-button color="warn" type="button" (click)="resetForm()">Reset</button>
-        <button class="mx-2" mat-raised-button color="primary" type="submit">Save</button>
+        <button class="mx-2" mat-raised-button color="accent" type="button" (click)="resetForm()">Reset
+        </button>
+        <button class="mx-2" mat-raised-button color="primary" type="submit">Save
+        </button>
       </div>
     </form>
    }
 </div>
+<app-loading-indicator [isOverlay]="isOverlay" [isLoading]="isLoading"></app-loading-indicator>
