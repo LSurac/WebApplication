@@ -8,12 +8,19 @@ import { ApplicationService } from 'src/app/services/application.service';
 import { SkillService } from 'src/app/services/skill.service';
 import { ApplicantDto, ApplicationDto, EApplicationState, SkillDto } from 'src/app/services/Web_Application_Client';
 import { LoadingIndicatorComponent } from '../../widgets/loading-indicator/loading-indicator.component';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule, MaterialModule, ApplicationstatePipe, LoadingIndicatorComponent],
+  imports: [
+    FormsModule, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    MaterialModule, 
+    ApplicationstatePipe, 
+    LoadingIndicatorComponent,
+  ],
   selector: 'app-career',
   templateUrl: './career.component.html',
   styleUrls: ['./career.component.scss']
@@ -63,6 +70,83 @@ export class CareerComponent implements OnInit {
     this.loadApplicationsAsync();
   }
 
+  public onApplicationChange(applicationId: number | undefined): void {
+    this.selectedApplicationId = applicationId;
+    this.resetForm();
+    this.loadApplicants();
+  }
+
+  public onSelectApplicant(applicant: ApplicantDto): void {
+    this.selectedApplicantId = applicant.id;
+    this.loadSkills(applicant.id);
+    
+    let formattedDate = applicant.birthDate instanceof Date
+    ? applicant.birthDate.toISOString().split('T')[0]
+    : applicant.birthDate;
+
+    this.applicantForm.patchValue({
+      applicationState: applicant.applicationState,
+      firstName: applicant.firstName,
+      lastName: applicant.lastName,
+      birthDate: formattedDate,
+      skills: applicant.skillList?.map(skill => skill.id)
+    });
+  }
+
+  public async onSaveAsync(): Promise<void> {
+    if (!this.applicantForm.valid) { 
+      return;
+    }
+    this.isLoading = true;
+    let applicant = new ApplicantDto();
+    let formValues = this.applicantForm.value;
+
+    applicant.id = this.selectedApplicantId || 0;
+    applicant.applicationState = formValues.applicationState;
+    applicant.firstName = formValues.firstName;
+    applicant.lastName = formValues.lastName;
+    let birthDateValue = formValues.birthDate;
+    applicant.birthDate = birthDateValue ? new Date(birthDateValue) : new Date();
+
+    applicant.skillList = formValues.skills.map((skillId: number, isCurrent: boolean) => {
+      let skill = this.skillList.find(s => s.id === skillId);
+      return new SkillDto({
+        id: skillId,
+        description: skill?.description || 'Unknown',
+        isCurrent: true
+      });
+    });
+
+    if (this.selectedApplicationId != undefined) {
+      await firstValueFrom(this.applicantService.ApplicantSet(applicant, this.selectedApplicationId)).then(() => {
+        this.loadApplicationsAsync();
+        this.resetForm();
+
+        this.snackBar.open('Applicant has been saved!', 'X', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          panelClass: 'app-notification-success'
+        });
+      }).catch(() => {
+        this.snackBar.open('Error while saving Applicant', 'X', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          panelClass: 'app-notification-error'
+        });
+      }).finally(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  public resetForm(): void {
+    this.applicantForm.reset();
+    this.formDirective?.resetForm();
+    this.selectedApplicantId = undefined;
+  }
+
   private async loadApplicationsAsync(): Promise<void> {
     this.isLoading = true;
     await firstValueFrom(this.applicationService.ApplicationListGet()).then(result => {
@@ -95,84 +179,5 @@ export class CareerComponent implements OnInit {
     this.skillService.SkillListGet(applicantId).subscribe(result => {
       this.skillList = result.skillList;
     });
-  }
-
-  public onApplicationChange(applicationId: number | undefined): void {
-    this.selectedApplicationId = applicationId;
-    this.resetForm();
-    this.loadApplicants();
-  }
-
-  public async onSaveAsync(): Promise<void> {
-    try {
-      if (!this.applicantForm.valid) { 
-        return;
-      }
-      this.isLoading = true;
-      let applicant = new ApplicantDto();
-      let formValues = this.applicantForm.value;
-  
-      applicant.id = this.selectedApplicantId || 0;
-      applicant.applicationState = formValues.applicationState;
-      applicant.firstName = formValues.firstName;
-      applicant.lastName = formValues.lastName;
-      let birthDateValue = formValues.birthDate;
-      applicant.birthDate = birthDateValue ? new Date(birthDateValue) : new Date();
-  
-      applicant.skillList = formValues.skills.map((skillId: number, isCurrent: boolean) => {
-        let skill = this.skillList.find(s => s.id === skillId);
-        return new SkillDto({
-          id: skillId,
-          description: skill?.description || 'Unknown',
-          isCurrent: true
-        });
-      });
-  
-      if (this.selectedApplicationId != undefined) {
-        await firstValueFrom(this.applicantService.ApplicantSet(applicant, this.selectedApplicationId)).then(() => {
-          this.loadApplicationsAsync();
-          this.resetForm();
-
-          this.snackBar.open('Applicant has been saved!', 'X', {
-            duration: 3000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            panelClass: 'app-notification-success'
-          });
-        }).catch(() => {
-          this.snackBar.open('Error while saving Applicant', 'X', {
-            duration: 3000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            panelClass: 'app-notification-error'
-          });
-        });
-      }
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  public onSelectApplicant(applicant: ApplicantDto): void {
-    this.selectedApplicantId = applicant.id;
-    this.loadSkills(applicant.id);
-    
-    let formattedDate = applicant.birthDate instanceof Date
-    ? applicant.birthDate.toISOString().split('T')[0]
-    : applicant.birthDate;
-
-    this.applicantForm.patchValue({
-      applicationState: applicant.applicationState,
-      firstName: applicant.firstName,
-      lastName: applicant.lastName,
-      birthDate: formattedDate,
-      skills: applicant.skillList?.map(skill => skill.id)
-    });
-  }
-
-  public resetForm(): void {
-    this.applicantForm.reset();
-    this.formDirective?.resetForm();
-    this.selectedApplicantId = undefined;
   }
 }

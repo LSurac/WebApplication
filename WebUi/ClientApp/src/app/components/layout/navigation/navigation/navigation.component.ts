@@ -6,7 +6,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   standalone: true,
-  imports: [MaterialModule, SidenavListComponent, NavigationHeaderComponent, BrowserAnimationsModule],
+  imports: [
+    MaterialModule, 
+    SidenavListComponent, 
+    NavigationHeaderComponent, 
+    BrowserAnimationsModule
+  ],
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss',

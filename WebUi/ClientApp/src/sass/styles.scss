@@ -15,7 +15,7 @@ $_rest: (
 $_primary: map.merge(map.get($_palettes, primary), $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
-// Define your light theme
+// Define the light theme
 $light-theme: mat.define-theme((
   color: (
     theme-type: light,
