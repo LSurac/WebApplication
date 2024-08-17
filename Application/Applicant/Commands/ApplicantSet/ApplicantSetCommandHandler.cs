@@ -7,8 +7,7 @@ namespace WebApplication.Application.Applicant.Commands.ApplicantSet
 {
     public class ApplicantSetCommandHandler(
         IMapper mapper,
-        IApplicantDataService applicantDataService,
-        ISkillDataService skillDataService) : IRequestHandler<ApplicantSetCommand, ApplicantSetCommandResult>
+        IApplicantDataService applicantDataService) : IRequestHandler<ApplicantSetCommand, ApplicantSetCommandResult>
     {
         public async Task<ApplicantSetCommandResult> Handle(
             ApplicantSetCommand request,

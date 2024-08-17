@@ -6,6 +6,8 @@ namespace WebApplication.ApplicationData.Contract.Services
     {
         public Task<List<ApplicantDataModel>> GetApplicantDataListByApplicationIdAsync(int applicationId);
         public Task<ApplicantDataModel> GetApplicantDataByApplicantIdAsync(int applicantId);
-        public Task SetApplicantDataAsync(ApplicantDataModel applicantDataModel, int applicationId);
+        public Task SetApplicantDataAsync(
+            ApplicantDataModel applicantDataModel, 
+            int applicationId);
     }
 }

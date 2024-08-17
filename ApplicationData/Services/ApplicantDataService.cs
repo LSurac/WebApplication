@@ -34,7 +34,9 @@ namespace WebApplication.ApplicationData.Services
             return MapApplicantToDataModel(applicantEntity, null, null);
         }
 
-        public async Task SetApplicantDataAsync(ApplicantDataModel applicantDataModel, int applicationId)
+        public async Task SetApplicantDataAsync(
+            ApplicantDataModel applicantDataModel, 
+            int applicationId)
         {
             var isInsert = applicantDataModel.Id == 0;
 
@@ -105,7 +107,9 @@ namespace WebApplication.ApplicationData.Services
             await applicantApplicationDbService.SetApplicantApplicationAsync(applicantApplicationEntity);
         }
 
-        private async Task<EApplicationState?> GetApplicationStateAsync(int applicantId, int applicationId)
+        private async Task<EApplicationState?> GetApplicationStateAsync(
+            int applicantId, 
+            int applicationId)
         {
             var applicantApplicationEntity = await applicantApplicationDbService.GetApplicantApplicationByApplicantIdAndApplicationIdAsync(applicantId, applicationId);
 

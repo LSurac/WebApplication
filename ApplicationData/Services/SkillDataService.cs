@@ -23,7 +23,9 @@ namespace WebApplication.ApplicationData.Services
             return skillDataModelList;
         }
 
-        public async Task SetSkillByApplicantId(int requestApplicantId, SkillDataModel requestSkill)
+        public async Task SetSkillByApplicantId(
+            int requestApplicantId, 
+            SkillDataModel requestSkill)
         {
             var skillEntity = MapSkillDataModelToEntity(requestSkill);
             skillEntity = await skillDbService.SetSkillAsync(skillEntity);
@@ -53,14 +55,18 @@ namespace WebApplication.ApplicationData.Services
             return skillDataModelList;
         }
 
-        public async Task DeleteApplicantSkillByApplicantIdAndSkillId(int applicantEntityId, int skillId)
+        public async Task DeleteApplicantSkillByApplicantIdAndSkillId(
+            int applicantEntityId, 
+            int skillId)
         {
             var applicantSkill = await applicantSkillDbService.GetApplicantSkillByApplicantIdAndSkillId(applicantEntityId, skillId);
 
             await applicantSkillDbService.DeleteApplicantSkillByApplicantIdAndSkillId(applicantSkill);
         }
 
-        private static Task<SkillDataModel> MapSkillToDataModel(Skill skill, bool isCurrent = false)
+        private static Task<SkillDataModel> MapSkillToDataModel(
+            Skill skill, 
+            bool isCurrent = false)
         {
             return Task.FromResult(
                 new SkillDataModel()
