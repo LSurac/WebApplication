@@ -70,46 +70,39 @@
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>First Name</mat-label>
           <input matInput id="firstName" formControlName="firstName" type="text" required/>
+          <mat-error *ngIf="applicantForm.get('firstName')?.hasError('required')">First Name is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Last Name</mat-label>
           <input matInput id="lastName" formControlName="lastName" type="text" required/>
+          <mat-error *ngIf="applicantForm.get('lastName')?.hasError('required')">Last Name is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
-            <mat-label>Birth Date</mat-label>
-            <input matInput id="birthDate" formControlName="birthDate" [matDatepicker]="picker" required/>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+          <mat-label>Birth Date</mat-label>
+          <input matInput id="birthDate" formControlName="birthDate" [matDatepicker]="picker" required/>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="applicantForm.get('birthDate')?.hasError('required')">Birth Date is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Skills</mat-label>
           <mat-select id="skills" formControlName="skills" multiple>
-            @for (skill of skillList; track $index) {
-              @if (skill.isCurrent) {
-                <mat-option [value]="skill.id" selected>
-                  {{ skill.description }}
-                </mat-option>
-              }
-              @else {
-                <mat-option [value]="skill.id">
-                  {{ skill.description }}
-                </mat-option>
-              }
-            }
-
+            <mat-option *ngFor="let skill of skillList" [value]="skill.id">
+              {{ skill.description }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-
+    
       <div class="col-md-6">
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Application State</mat-label>
@@ -118,9 +111,10 @@
               {{ state.label }}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="applicantForm.get('applicationState')?.hasError('required')">Application State is required</mat-error>
         </mat-form-field>
       </div>
-  
+    
       <div class="col-12 text-end">
         <button class="mx-2" mat-raised-button color="warn" type="button" (click)="resetForm()">Reset</button>
         <button class="mx-2" mat-raised-button color="primary" type="submit">Save</button>

@@ -95,6 +95,9 @@ export class CareerComponent implements OnInit {
 
   public async onSaveAsync(): Promise<void> {
     try {
+      if (!this.applicantForm.valid) { 
+        return;
+      }
       this.isLoading = true;
       let applicant = new ApplicantDto();
       let formValues = this.applicantForm.value;
